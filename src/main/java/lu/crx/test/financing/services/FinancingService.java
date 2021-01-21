@@ -1,13 +1,17 @@
 package lu.crx.test.financing.services;
 
 import javax.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class FinancingService {
 
     @Transactional
     public void finance() {
+        log.info("Running the financing");
+
         // This is the part that needs to be implemented. Here you need to implement the financing algorithm
         // according to the specification.
 

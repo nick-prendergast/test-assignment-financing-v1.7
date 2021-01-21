@@ -7,7 +7,7 @@ The application
 You need to implement the financing algorithm according to the specification. The algorithm has to
 calculate the results of the financing and persist them (the data structure for the results is not provided).
 
-The invoices financed in a financing round are considered to be "sold" and may not be solved twice. 
+The invoices financed in a financing round are considered to be "sold" and may not be sold twice. 
 
 Your entry point is the `FinancingService` class. Naturally, you may create additional classes, if needed. 
 You can also add new relations, new entities or fields to existing ones. You may also use any third-party 

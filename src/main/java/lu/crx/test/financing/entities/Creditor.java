@@ -6,18 +6,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * A creditor is an entity that provided some goods to the debtor according to the invoice and is waiting for
+ * A creditor is an entity that provided some goods to the {@link Debtor}, issued an {@link Invoice} and is waiting for
  * this invoice to be paid by the debtor.
  */
 @Entity
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Creditor implements Serializable {
 
     @Id

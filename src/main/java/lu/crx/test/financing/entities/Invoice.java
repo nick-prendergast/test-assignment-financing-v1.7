@@ -15,6 +15,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * An invoice issued by the {@link Creditor} to the {@link Debtor} for shipped goods.
+ */
 @Entity
 @Getter
 @Setter
@@ -41,7 +44,7 @@ public class Invoice implements Serializable {
     private Debtor debtor;
 
     /**
-     * Maturity date is the date on which the Debtor is to pay for the invoice.
+     * Maturity date is the date on which the {@link #debtor} is to pay for the invoice.
      * In case the invoice was financed, this money will be paid in full to the purchaser of the invoice.
      */
     @Basic(optional = false)

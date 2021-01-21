@@ -6,18 +6,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * A debtor is an entity that purchased some goods from the creditor according to the invoice and is obliged to pay
- * for the invoice at maturity date.
+ * A debtor is an entity that purchased some goods from the {@link Creditor}, received an {@link Invoice}
+ * and is obliged to pay for the invoice at the maturity date.
  */
 @Entity
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Debtor implements Serializable {
 
     @Id

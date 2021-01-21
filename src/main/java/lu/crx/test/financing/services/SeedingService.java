@@ -3,6 +3,7 @@ package lu.crx.test.financing.services;
 import java.time.LocalDate;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import lu.crx.test.financing.entities.Creditor;
 import lu.crx.test.financing.entities.Debtor;
 import lu.crx.test.financing.entities.Invoice;
@@ -10,6 +11,7 @@ import lu.crx.test.financing.entities.Purchaser;
 import lu.crx.test.financing.entities.PurchaserFinancingSettings;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class SeedingService {
 
@@ -35,53 +37,67 @@ public class SeedingService {
 
     @Transactional
     public void seedMasterData() {
+        log.info("Seeding master data");
+
         // creditors
-        creditor1 = new Creditor();
-        creditor1.setName("Coffee Beans LLC");
+        creditor1 = Creditor.builder()
+                .name("Coffee Beans LLC")
+                .build();
         entityManager.persist(creditor1);
 
-        creditor2 = new Creditor();
-        creditor2.setName("Home Brew");
+        creditor2 = Creditor.builder()
+                .name("Home Brew")
+                .build();
         entityManager.persist(creditor2);
 
-        creditor3 = new Creditor();
-        creditor3.setName("Beanstalk");
+        creditor3 = Creditor.builder()
+                .name("Beanstalk")
+                .build();
         entityManager.persist(creditor3);
 
-        creditor4 = new Creditor();
-        creditor4.setName("MyBeans");
+        creditor4 = Creditor.builder()
+                .name("MyBeans")
+                .build();
         entityManager.persist(creditor4);
 
-        creditor5 = new Creditor();
-        creditor5.setName("Happy Bean");
+        creditor5 = Creditor.builder()
+                .name("Happy Bean")
+                .build();
         entityManager.persist(creditor5);
 
         // debtors
-        debtor1 = new Debtor();
-        debtor1.setName("Chocolate Factory");
+        debtor1 = Debtor.builder()
+                .name("Chocolate Factory")
+                .build();
         entityManager.persist(debtor1);
 
-        debtor2 = new Debtor();
-        debtor2.setName("Sweets Inc");
+        debtor2 = Debtor.builder()
+                .name("Sweets Inc")
+                .build();
         entityManager.persist(debtor2);
 
-        debtor3 = new Debtor();
-        debtor3.setName("ChocoLoco");
+        debtor3 = Debtor.builder()
+                .name("ChocoLoco")
+                .build();
         entityManager.persist(debtor3);
 
         // purchasers
-        purchaser1 = new Purchaser();
-        purchaser1.setName("FatRichBank");
-        purchaser1.setMinimumFinancingTermInDays(10);
-        purchaser1.getPurchaserFinancingSettings().add(PurchaserFinancingSettings.builder()
-                .creditor(creditor1)
-                .creditLineLimitInCents(10_000_000_00)
-                .rateInBps(50)
-                .build());
+        purchaser1 = Purchaser.builder()
+                .name("FatRichBank")
+                .minimumFinancingTermInDays(10)
+                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
+                        .creditor(creditor1)
+                        .creditLineLimitInCents(10_000_000_00)
+                        .rateInBps(50)
+                        .build())
+                .build();
+        entityManager.persist(purchaser1);
     }
 
     @Transactional
     public void seedFirstBatch() {
+        log.info("Seeding the first batch of invoices");
+
         entityManager.persist(Invoice.builder()
                 .creditor(creditor1)
                 .debtor(debtor1)
@@ -92,6 +108,8 @@ public class SeedingService {
 
     @Transactional
     public void seedSecondBatch() {
+        log.info("Seeding the second batch of invoices");
+
         entityManager.persist(Invoice.builder()
                 .creditor(creditor1)
                 .debtor(debtor1)
