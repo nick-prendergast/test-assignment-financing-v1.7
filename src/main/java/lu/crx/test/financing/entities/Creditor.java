@@ -14,8 +14,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * A creditor is an entity that provided some goods to the {@link Debtor}, issued an {@link Invoice} and is waiting for
- * this invoice to be paid by the debtor.
+ * A creditor is a company that shipped some goods to the {@link Debtor}, issued an {@link Invoice} for the shipment
+ * and is waiting for this invoice to be paid by the debtor.
  */
 @Entity
 @Getter

@@ -46,10 +46,4 @@ public class PurchaserFinancingSettings implements Serializable {
     @Basic(optional = false)
     private int rateInBps;
 
-    /**
-     * The maximum amount of currently financed invoices for this creditor.
-     */
-    @Basic
-    private long creditLineLimitInCents;
-
 }

@@ -15,7 +15,8 @@ import lombok.ToString;
 
 /**
  * A debtor is an entity that purchased some goods from the {@link Creditor}, received an {@link Invoice}
- * and is obliged to pay for the invoice at the maturity date.
+ * and is obliged to pay for the invoice at the specified date called maturity date
+ * (see {@link Invoice#getMaturityDate()}).
  */
 @Entity
 @Getter

@@ -20,8 +20,6 @@ public class SeedingService {
     private Creditor creditor1;
     private Creditor creditor2;
     private Creditor creditor3;
-    private Creditor creditor4;
-    private Creditor creditor5;
 
     private Debtor debtor1;
     private Debtor debtor2;
@@ -55,16 +53,6 @@ public class SeedingService {
                 .build();
         entityManager.persist(creditor3);
 
-        creditor4 = Creditor.builder()
-                .name("MyBeans")
-                .build();
-        entityManager.persist(creditor4);
-
-        creditor5 = Creditor.builder()
-                .name("Happy Bean")
-                .build();
-        entityManager.persist(creditor5);
-
         // debtors
         debtor1 = Debtor.builder()
                 .name("Chocolate Factory")
@@ -83,15 +71,58 @@ public class SeedingService {
 
         // purchasers
         purchaser1 = Purchaser.builder()
-                .name("FatRichBank")
+                .name("RichBank")
                 .minimumFinancingTermInDays(10)
                 .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
                         .creditor(creditor1)
-                        .creditLineLimitInCents(10_000_000_00)
                         .rateInBps(50)
+                        .build())
+                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
+                        .creditor(creditor2)
+                        .rateInBps(60)
+                        .build())
+                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
+                        .creditor(creditor3)
+                        .rateInBps(30)
                         .build())
                 .build();
         entityManager.persist(purchaser1);
+
+        purchaser2 = Purchaser.builder()
+                .name("FatBank")
+                .minimumFinancingTermInDays(12)
+                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
+                        .creditor(creditor1)
+                        .rateInBps(40)
+                        .build())
+                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
+                        .creditor(creditor2)
+                        .rateInBps(80)
+                        .build())
+                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
+                        .creditor(creditor3)
+                        .rateInBps(25)
+                        .build())
+                .build();
+        entityManager.persist(purchaser2);
+
+        purchaser3 = Purchaser.builder()
+                .name("MegaBank")
+                .minimumFinancingTermInDays(8)
+                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
+                        .creditor(creditor1)
+                        .rateInBps(50)
+                        .build())
+                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
+                        .creditor(creditor2)
+                        .rateInBps(60)
+                        .build())
+                .purchaserFinancingSetting(PurchaserFinancingSettings.builder()
+                        .creditor(creditor3)
+                        .rateInBps(45)
+                        .build())
+                .build();
+        entityManager.persist(purchaser3);
     }
 
     @Transactional
@@ -104,6 +135,7 @@ public class SeedingService {
                 .valueInCents(1_000_00)
                 .maturityDate(LocalDate.now().plusDays(50))
                 .build());
+        // TODO add more invoices
     }
 
     @Transactional
@@ -116,6 +148,7 @@ public class SeedingService {
                 .valueInCents(100)
                 .maturityDate(LocalDate.now().plusDays(52))
                 .build());
+        // TODO add more invoices
     }
 
 }

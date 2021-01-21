@@ -45,13 +45,13 @@ public class Invoice implements Serializable {
 
     /**
      * Maturity date is the date on which the {@link #debtor} is to pay for the invoice.
-     * In case the invoice was financed, this money will be paid in full to the purchaser of the invoice.
+     * In case the invoice was financed, the money will be paid in full on this date to the purchaser of the invoice.
      */
     @Basic(optional = false)
     private LocalDate maturityDate;
 
     /**
-     * The value is the amount to be payed by the Debtor.
+     * The value is the amount to be payed for the shipment by the Debtor.
      */
     @Basic(optional = false)
     private long valueInCents;

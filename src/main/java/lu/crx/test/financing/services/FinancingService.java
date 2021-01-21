@@ -12,8 +12,8 @@ public class FinancingService {
     public void finance() {
         log.info("Running the financing");
 
-        // This is the part that needs to be implemented. Here you need to implement the financing algorithm
-        // according to the specification.
+        // TODO
+        // This is the financing algorithm that needs to be implemented according to the specification.
 
         // For every invoice that may be financed, pick the winning purchaser. Calculate the amount of money received
         // by the creditor and the interest of the purchaser, persist calculated data.

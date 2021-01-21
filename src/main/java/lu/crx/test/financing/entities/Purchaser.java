@@ -38,6 +38,9 @@ public class Purchaser implements Serializable {
     @Basic(optional = false)
     private String name;
 
+    /**
+     * The maximum financing term (
+     */
     @Basic(optional = false)
     private int minimumFinancingTermInDays;
 
