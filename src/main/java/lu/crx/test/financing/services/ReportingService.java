@@ -37,7 +37,7 @@ public class ReportingService {
 
         private final String purchaserName;
         private final String creditorName;
-        // the total amount that the Purchaser will pay to the Creditor for this financing
+        // the total amount that the Purchaser has to pay to the Creditor for this financing
         private final long totalCreditorPaymentInCents;
         // the total amount of Purchaser interest for the latest financing of this Creditor
         private final long totalPurchaserInterestInCents;

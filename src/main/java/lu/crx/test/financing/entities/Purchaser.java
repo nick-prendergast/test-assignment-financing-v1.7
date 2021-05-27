@@ -39,7 +39,7 @@ public class Purchaser implements Serializable {
     private String name;
 
     /**
-     * The maximum financing term (
+     * The minimum financing term (duration between the financing date and the maturity date of the invoice).
      */
     @Basic(optional = false)
     private int minimumFinancingTermInDays;

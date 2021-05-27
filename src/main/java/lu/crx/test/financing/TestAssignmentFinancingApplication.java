@@ -20,18 +20,18 @@ public class TestAssignmentFinancingApplication {
             SeedingService seedingService,
             FinancingService financingService,
             ReportingService reportingService) {
+
         return args -> {
             // seeding master data - creditors, debtors and purchasers
             seedingService.seedMasterData();
 
-            // seeding the first batch of invoices, running the financing, printing out the results
-            seedingService.seedFirstBatch();
-            financingService.finance();
-            reportingService.printFinancingReport();
+            // seeding the invoices
+            seedingService.seedInvoices();
 
-            // seeding the second batch of invoices, running the financing, printing out the results
-            seedingService.seedSecondBatch();
+            // running the financing
             financingService.finance();
+
+            // printing out the financing results
             reportingService.printFinancingReport();
 
         };
