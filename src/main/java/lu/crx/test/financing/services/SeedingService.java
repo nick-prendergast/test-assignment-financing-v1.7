@@ -135,105 +135,105 @@ public class SeedingService {
         entityManager.persist(Invoice.builder()
                 .creditor(creditor1)
                 .debtor(debtor1)
-                .valueInCents(100)
+                .valueInCents(200000)
                 .maturityDate(LocalDate.now().plusDays(52))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor1)
                 .debtor(debtor2)
-                .valueInCents(500)
+                .valueInCents(800000)
                 .maturityDate(LocalDate.now().plusDays(33))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor1)
                 .debtor(debtor3)
-                .valueInCents(600)
+                .valueInCents(600000)
                 .maturityDate(LocalDate.now().plusDays(43))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor1)
                 .debtor(debtor1)
-                .valueInCents(70030)
+                .valueInCents(500000)
                 .maturityDate(LocalDate.now().plusDays(80))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor1)
                 .debtor(debtor2)
-                .valueInCents(100000)
+                .valueInCents(6000000)
                 .maturityDate(LocalDate.now().plusDays(5))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor2)
                 .debtor(debtor3)
-                .valueInCents(1000)
+                .valueInCents(500000)
                 .maturityDate(LocalDate.now().plusDays(10))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor2)
                 .debtor(debtor1)
-                .valueInCents(5000)
+                .valueInCents(800000)
                 .maturityDate(LocalDate.now().plusDays(15))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor2)
                 .debtor(debtor2)
-                .valueInCents(8000)
+                .valueInCents(9000000)
                 .maturityDate(LocalDate.now().plusDays(30))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor2)
                 .debtor(debtor3)
-                .valueInCents(12000)
+                .valueInCents(450000)
                 .maturityDate(LocalDate.now().plusDays(32))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor2)
                 .debtor(debtor1)
-                .valueInCents(100)
+                .valueInCents(800000)
                 .maturityDate(LocalDate.now().plusDays(11))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor3)
                 .debtor(debtor2)
-                .valueInCents(1000)
+                .valueInCents(3000000)
                 .maturityDate(LocalDate.now().plusDays(10))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor3)
                 .debtor(debtor3)
-                .valueInCents(5000)
+                .valueInCents(5000000)
                 .maturityDate(LocalDate.now().plusDays(14))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor3)
                 .debtor(debtor1)
-                .valueInCents(8000)
+                .valueInCents(9000000)
                 .maturityDate(LocalDate.now().plusDays(23))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor3)
                 .debtor(debtor2)
-                .valueInCents(3000)
+                .valueInCents(800000)
                 .maturityDate(LocalDate.now().plusDays(18))
                 .build());
 
         entityManager.persist(Invoice.builder()
                 .creditor(creditor3)
                 .debtor(debtor3)
-                .valueInCents(2200)
+                .valueInCents(9000000)
                 .maturityDate(LocalDate.now().plusDays(50))
                 .build());
     }

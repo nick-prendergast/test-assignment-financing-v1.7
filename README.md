@@ -53,8 +53,8 @@ Suppose today is 2021-05-27. We have 2 purchasers Purchaser1 and Purchaser2 and 
 Purchaser1 has set up the annual rate of 50 bps for the Creditor1. Purchaser2 has set up 40 bps for the same creditor.
 The Creditor1 has set up 4 bps as maximum financing rate.
 
-The creditor has an invoice with the value of 10 000,00 EUR and the maturity date of 2021-06-26. The financing term 
-of the invoice (duration between today and maturity date) is then 30 days. 
+The Creditor1 has a single invoice with the value of 10 000,00 EUR and the maturity date of 2021-06-26. 
+The financing term of the invoice (duration between today and maturity date) is then 30 days. 
 
 When we run the financing, the financing rate for Purchaser1 for this invoice should be calculated as 
 50 bps * 30 days / 360 days/year = 4,167 bps, the financing rate for Purchaser2 would be 
@@ -73,6 +73,7 @@ Purchaser2  Creditor1   9 996,67 EUR    3,33 EUR
 ## What we'd like to see
 
 * implementation of the financing algorithm;
+* persisting of the financing results;  
 * implementation of the reporting;
 * tests verifying that your solution is correct;
 * any documentation you think is necessary for your solution.
