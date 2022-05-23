@@ -51,7 +51,7 @@ public class Invoice implements Serializable {
     private LocalDate maturityDate;
 
     /**
-     * The value is the amount to be payed for the shipment by the Debtor.
+     * The value is the amount to be paid for the shipment by the Debtor.
      */
     @Basic(optional = false)
     private long valueInCents;

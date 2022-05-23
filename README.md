@@ -45,6 +45,13 @@ A `Purchaser` is eligible for financing of the `Invoice`, if:
 Of all purchasers eligible for financing, select the one with the lowest financing rate. This will be the 
 `Purchaser` that finances the invoice.
 
+### Reporting specification
+
+Reporting should contain a record for each unique Purchaser/Creditor pair that participated in the latest
+financing: if the Purchaser financed any invoices of this Creditor in this financing round, there should
+be one record for this Purchaser/Creditor. If the Purchaser didn't finance any invoices of this Creditor,
+there should be no records for this Purchaser/Creditor.
+
 ### Example
 
 The rates are measured in bps (basis points). One basis point is 0,01%, or 0,0001.
