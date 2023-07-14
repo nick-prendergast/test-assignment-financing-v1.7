@@ -1,7 +1,6 @@
 package lu.crx.test.financing;
 
 import lu.crx.test.financing.services.FinancingService;
-import lu.crx.test.financing.services.ReportingService;
 import lu.crx.test.financing.services.SeedingService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,8 +17,7 @@ public class TestAssignmentFinancingApplication {
     @Bean
     public CommandLineRunner run(
             SeedingService seedingService,
-            FinancingService financingService,
-            ReportingService reportingService) {
+            FinancingService financingService) {
 
         return args -> {
             // seeding master data - creditors, debtors and purchasers
@@ -30,10 +28,6 @@ public class TestAssignmentFinancingApplication {
 
             // running the financing
             financingService.finance();
-
-            // printing out the financing results
-            reportingService.printFinancingReport();
-
         };
     }
 

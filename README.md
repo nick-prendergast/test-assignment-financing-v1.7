@@ -3,7 +3,7 @@
 The application in this repository: 
 * creates an H2 database in the root directory of the project;
 * sets up the database structure according to the entities;
-* seeds some initial data, runs the financing algorithm and prints out the report.
+* seeds some initial data and runs the financing algorithm.
 
 ## What you need to do
 
@@ -15,7 +15,7 @@ may not be financed in the subsequent financing rounds.
 To store the results of the financing, you will have to adjust the data structure. You are free to create 
 new entities and adjust the existing ones.
 
-Your entry points are `FinancingService` and `ReportingService` classes. Naturally, you may create additional
+Your entry point is `FinancingService` class. Naturally, you may create additional
 classes, if needed. You can also add new relations, new entities or fields to existing ones. You may also 
 use any third-party dependencies you need. 
 
@@ -32,7 +32,7 @@ in the previous rounds.
 For each non-financed `Invoice`:
 * select the single financing `Purchaser`;
 * calculate the `Purchaser`'s interest and the `Creditor`'s payment for this invoice;
-* persist the financing data.
+* persist the financing results (link to selected purchaser, applied financing term and rate, early payment amount).
 
 A `Purchaser` is eligible for financing of the `Invoice`, if:
 * the `Purchaser` has set up the settings for the invoice's `Creditor` (has a `PurchaserFinancingSettings` 
@@ -45,12 +45,8 @@ A `Purchaser` is eligible for financing of the `Invoice`, if:
 Of all purchasers eligible for financing, select the one with the lowest financing rate. This will be the 
 `Purchaser` that finances the invoice.
 
-### Reporting specification
-
-Reporting should contain a record for each unique Purchaser/Creditor pair that participated in the latest
-financing: if the Purchaser financed any invoices of this Creditor in this financing round, there should
-be one record for this Purchaser/Creditor. If the Purchaser didn't finance any invoices of this Creditor,
-there should be no records for this Purchaser/Creditor.
+Take performance considerations into account: the total amount of invoices in the database could be 
+tens of millions of records, with tens of thousands actually financeable in each round.
 
 ### Example
 
@@ -71,25 +67,13 @@ rate set up by the Creditor, so only Purchaser2 wins the financing of the invoic
 The Purchaser2's interest is then calculated as 10 000,00 EUR * 3,333 bps * 0,0001 = 3,33 EUR. 
 The creditor payment is 10 000,00 EUR - 3,33 EUR = 9 996,67 EUR.
 
-The reporting should then produce something like:
-
-```
-Purchaser2  Creditor1   9 996,67 EUR    3,33 EUR
-```
-
 ## What we'd like to see
 
-* implementation of the financing algorithm;
-* persisting of the financing results;  
-* implementation of the reporting;
+* implementation of the financing algorithm; 
+* persisting of the financing results;
+* appropriate logging of financing process for observability;
 * tests verifying that your solution is correct;
 * any documentation you think is necessary for your solution.
-
-## If this was too easy
-
-* when calculating the term of the financing, consider only working days;
-* implement Debtor blacklisting: if a Purchaser has added a Debtor to a blacklist,
-  then this Purchaser is not eligible for financing of this Debtor's invoices.
 
 ## Glossary
 
