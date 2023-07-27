@@ -74,6 +74,10 @@ The creditor payment is 10 000,00 EUR - 3,33 EUR = 9 996,67 EUR.
 * appropriate logging of financing process for observability;
 * tests verifying that your solution is correct;
 * any documentation you think is necessary for your solution.
+* results of performance testing. On typical quad-core x86-64 workstation, we expect to process 10,000 unpaid invoices 
+ in under 30 seconds, even when the database holds over 1,000,000 previously financed invoices
+* in case any functional or non-functional requirement are not achieved due to lack of time, 
+ provide textual explanation of further steps to explore and implement 
 
 ## Glossary
 
