@@ -8,9 +8,8 @@ The application in this repository:
 ## What you need to do
 
 You need to implement the financing algorithm according to the specification. The algorithm has to
-calculate the results of the financing and persist them. One invocation of the algorithm represents
-one financing round. The invoices financed in a financing round are considered to be "financed" and 
-may not be financed in the subsequent financing rounds. 
+calculate the results of the financing and persist them. The invoices financed in a one application run are considered 
+to be "financed" and must not be financed in the subsequent applications runs. 
 
 To store the results of the financing, you will have to adjust the data structure. You are free to create 
 new entities and adjust the existing ones.
@@ -26,46 +25,45 @@ seeding data if you wish to make it more representative.
 
 The terminology used here is described in more detail in the Glossary section.
 
-The financing algorithm should be applied separately to each invoice in the database which was not financed 
-in the previous rounds.
+The financing algorithm should be applied separately to each invoice in the database which was not financed yet.
 
 For each non-financed `Invoice`:
-* select the single financing `Purchaser`;
-* calculate the `Purchaser`'s interest and the `Creditor`'s payment for this invoice;
-* persist the financing results (link to selected purchaser, applied financing term and rate, early payment amount).
+1. select the single financing `Purchaser`;
+2. calculate financing results: applied financing term, rate and date; early payment amount; 
+3. save financing results with link to selected `Purchaser` for the `Invoice` in the database: 
+ all monetary values should be stored in `cents` units, rates in `bps` units.
 
 A `Purchaser` is eligible for financing of the `Invoice`, if:
-* the `Purchaser` has set up the settings for the invoice's `Creditor` (has a `PurchaserFinancingSettings` 
+1. the `Purchaser` has set up the settings for the invoice's `Creditor` (has a `PurchaserFinancingSettings` 
   defined for this `Creditor`);
-* the financing term of the invoice (duration between the current date and the maturity date of the invoice) 
+2. the financing term of the invoice (duration between the current date and the maturity date of the invoice) 
   is greater or equal to the value `Purchaser.minimumFinancingTermInDays` for this `Purchaser`;
-* the `Purchaser`'s financing rate for the invoice doesn't exceed the `Creditor.maxFinancingRateInBps` value 
+3. the `Purchaser`'s financing rate for the invoice doesn't exceed the `Creditor.maxFinancingRateInBps` value 
   for the invoice's `Creditor`. 
 
 Of all purchasers eligible for financing, select the one with the lowest financing rate. This will be the 
 `Purchaser` that finances the invoice.
 
 Take performance considerations into account: the total amount of invoices in the database could be 
-tens of millions of records, with tens of thousands actually financeable in each round.
+tens of millions of records, with tens of thousands to be financed.
 
 ### Example
 
 The rates are measured in bps (basis points). One basis point is 0,01%, or 0,0001.
 
-Suppose today is 2021-05-27. We have 2 purchasers Purchaser1 and Purchaser2 and one creditor Creditor1.
+Suppose today is 2023-05-27. We have 2 purchasers Purchaser1 and Purchaser2 and one creditor Creditor1.
 Purchaser1 has set up the annual rate of 50 bps for the Creditor1. Purchaser2 has set up 40 bps for the same creditor.
 The Creditor1 has set up 4 bps as maximum financing rate.
 
-The Creditor1 has a single invoice with the value of 10 000,00 EUR and the maturity date of 2021-06-26. 
+The Creditor1 has a single invoice with the value of 10 000,00 EUR and the maturity date of 2023-06-26. 
 The financing term of the invoice (duration between today and maturity date) is then 30 days. 
 
 When we run the financing, the financing rate for Purchaser1 for this invoice should be calculated as 
-50 bps * 30 days / 360 days/year = 4,167 bps, the financing rate for Purchaser2 would be 
-40 bps * 30 days / 360 days/year = 3,333 bps. The Purchaser1's financing rate is greater than the maximum financing
+50 bps * 30 days / 360 days/year = 4 bps, the financing rate for Purchaser2 would be 
+40 bps * 30 days / 360 days/year = 3 bps. The Purchaser1's financing rate is greater than the maximum financing
 rate set up by the Creditor, so only Purchaser2 wins the financing of the invoice.
 
-The Purchaser2's interest is then calculated as 10 000,00 EUR * 3,333 bps * 0,0001 = 3,33 EUR. 
-The creditor payment is 10 000,00 EUR - 3,33 EUR = 9 996,67 EUR.
+The early payment amount for the invoice is 10 000,00 EUR - 3,00 EUR = 9 997,00 EUR.
 
 ## What we'd like to see
 
@@ -73,11 +71,11 @@ The creditor payment is 10 000,00 EUR - 3,33 EUR = 9 996,67 EUR.
 * persisting of the financing results;
 * appropriate logging of financing process for observability;
 * tests verifying that your solution is correct;
-* any documentation you think is necessary for your solution.
+* any documentation you think is necessary for your solution;
 * results of performance testing. On typical quad-core x86-64 workstation, we expect to process 10,000 unpaid invoices 
- in under 30 seconds, even when the database holds over 1,000,000 previously financed invoices
+ in under 30 seconds, even when the database holds over 1,000,000 previously financed invoices;
 * in case any functional or non-functional requirement are not achieved due to lack of time, 
- provide textual explanation of further steps to explore and implement 
+ provide textual explanation of further steps to explore and implement.
 
 ## Glossary
 
@@ -101,6 +99,3 @@ is financed, and the **Creditor** already got their money early from the **Purch
   Calculated as `financingRate = annualRate * financingTerm / 360`
 * **Early payment amount** - the amount of money paid by the **Purchaser** to the **Creditor** for the particular
 financed invoice on **financing date**. This amount is less than the value of the invoice.
-* **Maturity payment amount** - the amount of money paid back by the **Debtor** to the **Purchaser** on 
-  **maturity date**. This amount is equal to the value of the invoice.
-* **Purchaser interest** - the difference between **maturity payment amount** and **early payment amount**.  
