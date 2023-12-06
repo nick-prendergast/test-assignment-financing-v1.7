@@ -1,4 +1,4 @@
-package lu.crx.test.financing.entities;
+package lu.crx.financing.entities;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +14,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Financing settings set by the purchaser for a specific creditor.
+ * A debtor is an entity that purchased some goods from the {@link Creditor}, received an {@link Invoice}
+ * and is obliged to pay for the invoice at the specified date called maturity date
+ * (see {@link Invoice#getMaturityDate()}).
  */
 @Entity
 @Getter
@@ -24,19 +25,13 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PurchaserFinancingSettings implements Serializable {
+public class Debtor implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToOne(optional = false)
-    private Creditor creditor;
-
-    /**
-     * The annual financing rate set by the purchaser for this creditor.
-     */
     @Basic(optional = false)
-    private int annualRateInBps;
+    private String name;
 
 }
