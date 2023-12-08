@@ -1,14 +1,14 @@
-package lu.crx.test.financing.services;
+package lu.crx.financing.services;
 
 import java.time.LocalDate;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import lu.crx.test.financing.entities.Creditor;
-import lu.crx.test.financing.entities.Debtor;
-import lu.crx.test.financing.entities.Invoice;
-import lu.crx.test.financing.entities.Purchaser;
-import lu.crx.test.financing.entities.PurchaserFinancingSettings;
+import lu.crx.financing.entities.Creditor;
+import lu.crx.financing.entities.Debtor;
+import lu.crx.financing.entities.Invoice;
+import lu.crx.financing.entities.Purchaser;
+import lu.crx.financing.entities.PurchaserFinancingSettings;
 import org.springframework.stereotype.Service;
 
 @Slf4j

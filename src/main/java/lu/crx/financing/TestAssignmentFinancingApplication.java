@@ -1,7 +1,7 @@
-package lu.crx.test.financing;
+package lu.crx.financing;
 
-import lu.crx.test.financing.services.FinancingService;
-import lu.crx.test.financing.services.SeedingService;
+import lu.crx.financing.services.FinancingService;
+import lu.crx.financing.services.SeedingService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
