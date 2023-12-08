@@ -1,17 +1,17 @@
-package lu.crx.test.financing;
+package lu.crx.financing;
 
-import lu.crx.test.financing.services.FinancingService;
-import lu.crx.test.financing.services.SeedingService;
+import lu.crx.financing.services.FinancingService;
+import lu.crx.financing.services.SeedingService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class TestAssignmentFinancingApplication {
+public class AssignmentFinancingApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TestAssignmentFinancingApplication.class, args);
+        SpringApplication.run(AssignmentFinancingApplication.class, args);
     }
 
     @Bean

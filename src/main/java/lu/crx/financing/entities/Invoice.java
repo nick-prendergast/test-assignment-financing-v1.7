@@ -1,4 +1,4 @@
-package lu.crx.test.financing.entities;
+package lu.crx.financing.entities;
 
 import java.io.Serializable;
 import java.time.LocalDate;
