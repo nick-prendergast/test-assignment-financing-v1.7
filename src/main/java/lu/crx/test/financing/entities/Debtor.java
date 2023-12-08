@@ -1,4 +1,4 @@
-package lu.crx.financing.entities;
+package lu.crx.test.financing.entities;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
@@ -14,8 +14,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * A creditor is a company that shipped some goods to the {@link Debtor}, issued an {@link Invoice} for the shipment
- * and is waiting for this invoice to be paid by the debtor.
+ * A debtor is an entity that purchased some goods from the {@link Creditor}, received an {@link Invoice}
+ * and is obliged to pay for the invoice at the specified date called maturity date
+ * (see {@link Invoice#getMaturityDate()}).
  */
 @Entity
 @Getter
@@ -24,7 +25,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Creditor implements Serializable {
+public class Debtor implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,11 +33,5 @@ public class Creditor implements Serializable {
 
     @Basic(optional = false)
     private String name;
-
-    /**
-     * Maximum acceptable financing rate for this creditor.
-     */
-    @Basic(optional = false)
-    private int maxFinancingRateInBps;
 
 }
