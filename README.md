@@ -53,7 +53,7 @@ The rates are measured in bps (basis points). One basis point is 0,01%, or 0,000
 
 Suppose today is 2023-05-27. We have 2 purchasers Purchaser1 and Purchaser2 and one creditor Creditor1.
 Purchaser1 has set up the annual rate of 50 bps for the Creditor1. Purchaser2 has set up 40 bps for the same creditor.
-The Creditor1 has set up 4 bps as maximum financing rate.
+The Creditor1 has set up 3 bps as maximum financing rate.
 
 The Creditor1 has a single invoice with the value of 10 000,00 EUR and the maturity date of 2023-06-26. 
 The financing term of the invoice (duration between today and maturity date) is then 30 days. 
@@ -67,14 +67,15 @@ The early payment amount for the invoice is 10 000,00 EUR - 3,00 EUR = 9 997,00 
 
 ## What we'd like to see
 
-* implementation of the financing algorithm; 
-* persisting of the financing results;
-* appropriate logging of financing process for observability;
-* tests verifying that your solution is correct;
-* any documentation you think is necessary for your solution;
-* results of performance testing. On typical quad-core x86-64 workstation, we expect to process 10,000 unpaid invoices 
- in under 30 seconds, even when the database holds over 1,000,000 previously financed invoices;
-* in case any functional or non-functional requirement are not achieved due to lack of time, 
+1. implementation of the financing algorithm; 
+2. persisting of the financing results;
+3. appropriate logging of financing process for observability;
+4. tests verifying that your solution is correct;
+5. results of performance testing. On typical quad-core x86-64 workstation, we expect to process 10,000 unpaid invoices,  
+ for 100 creditors and 100 purchasers in under 30 seconds, even when the database holds over 1,000,000 previously financed invoices;
+6. any documentation you think is necessary for your solution;
+
+In case any functional or non-functional requirement are not achieved due to lack of time, 
  provide textual explanation of further steps to explore and implement.
 
 ## Glossary
