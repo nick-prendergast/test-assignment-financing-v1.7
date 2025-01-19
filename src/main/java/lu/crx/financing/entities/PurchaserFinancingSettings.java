@@ -27,7 +27,7 @@ import lombok.ToString;
 public class PurchaserFinancingSettings implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne(optional = false)

@@ -28,7 +28,7 @@ import lombok.ToString;
 public class Invoice implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     /**
@@ -55,4 +55,17 @@ public class Invoice implements Serializable {
      */
     @Basic(optional = false)
     private long valueInCents;
+
+    /**
+     * The early payment amount of the invoice. Should be not null if invoice has been financed.
+     */
+    @Basic
+    private Long earlyPaymentAmountInCents;
+
+    /**
+     * The early discounted amount of the invoice. Should be not null if invoice has been financed.
+     *  The sum earlyPaymentAmountInCents + discountedAmountInCents should be equal to valueInCents.
+     */
+    @Basic
+    private long discountedAmountInCents;
 }

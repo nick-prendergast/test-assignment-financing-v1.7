@@ -32,7 +32,7 @@ import lombok.ToString;
 public class Purchaser implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Basic(optional = false)
