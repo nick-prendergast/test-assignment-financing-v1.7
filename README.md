@@ -1,10 +1,7 @@
 ## What you get
 
-The application in this repository: 
-* creates an H2 database in the root directory of the project;
-* sets up the database structure according to the entities;
-* seeds some initial data and runs the financing algorithm.
-* we provide a basic integration test for the success path to verify that implementation works. It's based on the example below. 
+The application in this repository provides a basic integration test for the success path to verify that implementation 
+works. It's based on the example below. It does not cover corner cases. 
 
 ## What you need to do
 
@@ -12,7 +9,7 @@ You need to implement the financing algorithm according to the specification. Th
 calculate the results of the financing and persist them. The invoices financed in a one application run are considered 
 to be "financed" and must not be financed in the subsequent applications runs. 
 
-To store the results of the financing, you will have to adjust the data structure. You are free to create 
+To store the results of the financing ot for other reason, you could adjust the data structure. You are free to create 
 new entities and adjust the existing ones.
 
 Your entry point is `FinancingService` class. Naturally, you may create additional
@@ -72,7 +69,7 @@ The early payment amount for the invoice is 10 000,00 EUR - 3,00 EUR = 9 997,00 
 2. persisting of the financing results;
 3. appropriate logging of financing process for observability;
 4. tests verifying that your solution is correct; We provide a basic test to verify that your implementation 
- works correctly for the success path
+ works correctly for the success path, but not fot the corner cases
 5. (optional) results of performance testing. On typical quad-core x86-64 workstation, we expect to process 10,000 unpaid invoices,  
  for 100 creditors and 100 purchasers in under 30 seconds, even when the database holds over 1,000,000 previously financed invoices;
 6. any documentation you think is necessary for your solution;
