@@ -29,7 +29,7 @@ class FinancingServiceIT {
     private TransactionTemplate template;
 
     @Autowired
-    private FinancingService financingService;
+    private InvoiceFinancingService financingService;
 
     /**
      * The test case based on example from README.md
@@ -78,7 +78,7 @@ class FinancingServiceIT {
             entityManager.persist(purchaser2);
         });
 
-        financingService.finance();
+        financingService.processInvoiceFinancing();
 
         template.executeWithoutResult(transactionStatus -> {
             Invoice updatedInvoice = entityManager.find(Invoice.class, invoice.getId());
