@@ -1,7 +1,6 @@
 package lu.crx.financing.entities;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import jakarta.persistence.Basic;
@@ -62,17 +61,17 @@ public class InvoiceFinancingDetails implements Serializable {
      * The applied financing rate in bps.
      */
     @Basic(optional = false)
-    private BigDecimal financingRateInBps;
+    private int financingRateInBps;
 
     /**
      * Early payment amount in cents.
      */
     @Basic(optional = false)
-    private BigDecimal earlyPaymentAmountInCents;
+    private long earlyPaymentAmountInCents;
 
     /**
      * Discounted amount in cents.
      */
     @Basic(optional = false)
-    private BigDecimal discountedAmountInCents;
+    private long discountedAmountInCents;
 }

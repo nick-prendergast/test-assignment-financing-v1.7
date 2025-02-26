@@ -1,7 +1,6 @@
 package lu.crx.financing.entities;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Entity;
@@ -61,12 +60,12 @@ public class Invoice implements Serializable {
      * The early payment amount of the invoice. Should be not null if invoice has been financed.
      */
     @Basic
-    private BigDecimal earlyPaymentAmountInCents;
+    private Long earlyPaymentAmountInCents;
 
     /**
      * The early discounted amount of the invoice. Should be not null if invoice has been financed.
      *  The sum earlyPaymentAmountInCents + discountedAmountInCents should be equal to valueInCents.
      */
     @Basic
-    private BigDecimal discountedAmountInCents;
+    private Long discountedAmountInCents;
 }

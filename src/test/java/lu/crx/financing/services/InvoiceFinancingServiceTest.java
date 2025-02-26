@@ -2,6 +2,7 @@ package lu.crx.financing.services;
 
 import jakarta.persistence.EntityManager;
 import lu.crx.financing.entities.*;
+import lu.crx.financing.entities.PurchaserFinancingResult;
 import lu.crx.financing.repositories.InvoiceFinancingDetailsRepository;
 import lu.crx.financing.repositories.InvoiceRepository;
 import lu.crx.financing.repositories.PurchaserRepository;
@@ -11,11 +12,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,7 +61,7 @@ class InvoiceFinancingServiceTest {
         Creditor creditor = Creditor.builder()
                 .id(1L)
                 .name("Creditor1")
-                .maxFinancingRateInBps(new BigDecimal("3"))
+                .maxFinancingRateInBps(3)
                 .build();
 
         Debtor debtor = Debtor.builder()
@@ -103,7 +105,7 @@ class InvoiceFinancingServiceTest {
 
         PurchaserFinancingResult financingResult = new PurchaserFinancingResult(
                 purchaser2,
-                new BigDecimal("3.3333"),
+                3,
                 30,
                 LocalDate.now()
         );
@@ -112,14 +114,7 @@ class InvoiceFinancingServiceTest {
         when(purchaserRepository.findAllWithFinancingSettings()).thenReturn(Arrays.asList(purchaser1, purchaser2));
         when(purchaserSelectionService.findBestPurchaser(eq(invoice), anyList(), any(LocalDate.class)))
                 .thenReturn(Optional.of(financingResult));
-
-        BigDecimal discountAmount = new BigDecimal("333.33");
-        BigDecimal earlyPaymentAmount = new BigDecimal("999666.67");
-
-        when(calculationService.calculateDiscountAmount(eq(10_000_00L), any(BigDecimal.class)))
-                .thenReturn(discountAmount);
-        when(calculationService.calculateEarlyPaymentAmount(eq(10_000_00L), any(BigDecimal.class)))
-                .thenReturn(earlyPaymentAmount);
+        when(calculationService.calculateDiscountAmount(eq(10_000_00L), eq(3))).thenReturn(3_00L);
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
 
         // When
@@ -129,11 +124,11 @@ class InvoiceFinancingServiceTest {
         verify(invoiceRepository).findNonFinancedInvoices();
         verify(purchaserRepository).findAllWithFinancingSettings();
         verify(purchaserSelectionService).findBestPurchaser(eq(invoice), anyList(), any(LocalDate.class));
-        verify(calculationService).calculateDiscountAmount(eq(10_000_00L), any(BigDecimal.class));
-        verify(calculationService).calculateEarlyPaymentAmount(eq(10_000_00L), any(BigDecimal.class));
+        verify(calculationService).calculateDiscountAmount(eq(10_000_00L), eq(3));
 
         verify(invoiceRepository).save(any(Invoice.class));
-        verify(financingDetailsRepository).save(any(InvoiceFinancingDetails.class));
+
+        verify(financingDetailsRepository).save(any());
     }
 
     @Test
@@ -156,8 +151,7 @@ class InvoiceFinancingServiceTest {
 
         verify(invoiceRepository, never()).save(any());
         verify(financingDetailsRepository, never()).save(any());
-        verify(calculationService, never()).calculateDiscountAmount(anyLong(), any(BigDecimal.class));
-        verify(calculationService, never()).calculateEarlyPaymentAmount(anyLong(), any(BigDecimal.class));
+        verify(calculationService, never()).calculateDiscountAmount(anyLong(), anyInt());
     }
 
     @Test
@@ -170,7 +164,7 @@ class InvoiceFinancingServiceTest {
 
         PurchaserFinancingResult financingResult = new PurchaserFinancingResult(
                 Purchaser.builder().build(),
-                new BigDecimal("3.3333"),
+                3,
                 30,
                 LocalDate.now()
         );
@@ -179,14 +173,7 @@ class InvoiceFinancingServiceTest {
         when(purchaserRepository.findAllWithFinancingSettings()).thenReturn(Collections.emptyList());
         when(purchaserSelectionService.findBestPurchaser(any(Invoice.class), anyList(), any(LocalDate.class)))
                 .thenReturn(Optional.of(financingResult));
-
-        BigDecimal discountAmount = new BigDecimal("333.33");
-        BigDecimal earlyPaymentAmount = new BigDecimal("999666.67");
-
-        when(calculationService.calculateDiscountAmount(anyLong(), any(BigDecimal.class)))
-                .thenReturn(discountAmount);
-        when(calculationService.calculateEarlyPaymentAmount(anyLong(), any(BigDecimal.class)))
-                .thenReturn(earlyPaymentAmount);
+        when(calculationService.calculateDiscountAmount(anyLong(), anyInt())).thenReturn(3_00L);
 
         // When
         invoiceFinancingService.processInvoiceFinancing();

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lu.crx.financing.entities.FinancingAmounts;
 import lu.crx.financing.entities.Invoice;
 import lu.crx.financing.entities.InvoiceFinancingDetails;
 import lu.crx.financing.entities.Purchaser;
@@ -13,7 +14,6 @@ import lu.crx.financing.repositories.InvoiceRepository;
 import lu.crx.financing.repositories.PurchaserRepository;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -93,41 +93,47 @@ public class InvoiceFinancingService {
     }
 
     private void applyFinancing(Invoice invoice, PurchaserFinancingResult purchaserMatch) {
-        BigDecimal financingRate = purchaserMatch.getFinancingRateInBps();
-        long invoiceValue = invoice.getValueInCents();
+        FinancingAmounts amounts = calculateFinancingAmounts(invoice, purchaserMatch);
 
-        BigDecimal discountAmount = calculationService.calculateDiscountAmount(invoiceValue, financingRate);
-        BigDecimal earlyPaymentAmount = calculationService.calculateEarlyPaymentAmount(invoiceValue, financingRate);
-
-        updateInvoice(invoice, earlyPaymentAmount, discountAmount);
+        updateInvoice(invoice, amounts);
         Invoice savedInvoice = invoiceRepository.save(invoice);
 
-        saveFinancingDetails(savedInvoice, purchaserMatch, earlyPaymentAmount, discountAmount);
+        saveFinancingDetails(savedInvoice, purchaserMatch, amounts);
 
-        logFinancingDetails(invoice, purchaserMatch, earlyPaymentAmount);
+        logFinancingDetails(invoice, purchaserMatch, amounts.getEarlyPaymentAmountInCents());
     }
 
-    private void updateInvoice(Invoice invoice, BigDecimal earlyPaymentAmount, BigDecimal discountAmount) {
-        invoice.setEarlyPaymentAmountInCents(earlyPaymentAmount);
-        invoice.setDiscountedAmountInCents(discountAmount);
+    private FinancingAmounts calculateFinancingAmounts(Invoice invoice, PurchaserFinancingResult purchaserMatch) {
+        long discountAmount = calculationService.calculateDiscountAmount(
+                invoice.getValueInCents(), purchaserMatch.getFinancingRateInBps());
+        long earlyPaymentAmount = invoice.getValueInCents() - discountAmount;
+
+        return FinancingAmounts.builder()
+                .earlyPaymentAmountInCents(earlyPaymentAmount)
+                .discountAmountInCents(discountAmount)
+                .build();
     }
 
-    private void saveFinancingDetails(Invoice invoice, PurchaserFinancingResult purchaserMatch,
-                                      BigDecimal earlyPaymentAmount, BigDecimal discountAmount) {
+    private void updateInvoice(Invoice invoice, FinancingAmounts amounts) {
+        invoice.setEarlyPaymentAmountInCents(amounts.getEarlyPaymentAmountInCents());
+        invoice.setDiscountedAmountInCents(amounts.getDiscountAmountInCents());
+    }
+
+    private void saveFinancingDetails(Invoice invoice, PurchaserFinancingResult purchaserMatch, FinancingAmounts amounts) {
         InvoiceFinancingDetails financingRecord = InvoiceFinancingDetails.builder()
                 .invoice(invoice)
                 .purchaser(purchaserMatch.getPurchaser())
                 .financingDate(purchaserMatch.getFinancingDate())
                 .financingTermInDays(purchaserMatch.getFinancingTermInDays())
                 .financingRateInBps(purchaserMatch.getFinancingRateInBps())
-                .earlyPaymentAmountInCents(earlyPaymentAmount)
-                .discountedAmountInCents(discountAmount)
+                .earlyPaymentAmountInCents(amounts.getEarlyPaymentAmountInCents())
+                .discountedAmountInCents(amounts.getDiscountAmountInCents())
                 .build();
 
         financingDetailsRepository.save(financingRecord);
     }
 
-    private void logFinancingDetails(Invoice invoice, PurchaserFinancingResult purchaserMatch, BigDecimal earlyPaymentAmount) {
+    private void logFinancingDetails(Invoice invoice, PurchaserFinancingResult purchaserMatch, long earlyPaymentAmount) {
         log.debug("Invoice {} financed by Purchaser {} with rate {} bps, early payment amount: {} cents",
                 invoice.getId(), purchaserMatch.getPurchaser().getName(),
                 purchaserMatch.getFinancingRateInBps(), earlyPaymentAmount);
@@ -138,4 +144,5 @@ public class InvoiceFinancingService {
         entityManager.clear();
         log.info("Processed {} invoices so far", processedCount);
     }
+
 }
