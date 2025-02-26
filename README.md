@@ -1,6 +1,6 @@
 ## Implementation Details
 
-For details about the architecture, design decisions, and implementation approach, please see the [Solution Documentation](SOLUTION.md)
+Please see the [Solution Documentation](SOLUTION.md) to see the outline of my solution 
 
 ## What you get
 
