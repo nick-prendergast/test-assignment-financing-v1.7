@@ -1,3 +1,7 @@
+## Implementation Details
+
+For details about the architecture, design decisions, and implementation approach, please see the [Solution Documentation](SOLUTION.md)
+
 ## What you get
 
 The application in this repository provides a basic integration test for the success path to verify that implementation 
@@ -99,3 +103,12 @@ is financed, and the **Creditor** already got their money early from the **Purch
   Calculated as `financingRate = annualRate * financingTerm / 360`
 * **Early payment amount** - the amount of money paid by the **Purchaser** to the **Creditor** for the particular
 financed invoice on **financing date**. This amount is less than the value of the invoice.
+
+
+Key Components
+Core Services
+ComponentResponsibilityInvoiceFinancingServiceMain entry point that orchestrates the financing workflow. Manages transactions and delegates to specialized services for optimal separation of concerns.PurchaserSelectionServiceImplements the core business logic for finding the optimal purchaser with the lowest rate while respecting all eligibility constraints.FinancingCalculationServiceEncapsulates all financial calculations with precise handling of basis points, rounding, and edge cases to ensure accuracy.PurchaserEligibilityServiceEnforces business rules for purchaser eligibility based on configured settings, financing terms, and rate limits.
+Processing Components
+ComponentResponsibilityInvoiceBatchProcessorOptimizes processing of large invoice volumes with memory management to handle the specified performance requirements.InvoiceFinancingApplierApplies financing decisions to individual invoices, ensuring atomic operations and complete audit trail.
+Data Access Layer
+ComponentResponsibilityEntityManagerUtilProvides memory optimization for large-scale processing through strategic entity manager flushing.InvoiceRepositoryEfficiently retrieves non-financed invoices and persists financing results.PurchaserRepositoryFetches purchasers with eager loading of financing settings for optimized data access.InvoiceFinancingDetailsRepositoryRecords complete financing transaction details for traceability.
