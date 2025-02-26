@@ -12,4 +12,5 @@ public class PurchaserFinancingResult {
     private final int financingRateInBps;
     private final int financingTermInDays;
     private final LocalDate financingDate;
+    private final double exactFinancingRate;
 }

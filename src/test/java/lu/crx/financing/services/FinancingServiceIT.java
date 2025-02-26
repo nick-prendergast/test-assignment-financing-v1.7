@@ -5,6 +5,7 @@ import lu.crx.financing.entities.Debtor;
 import lu.crx.financing.entities.Purchaser;
 import lu.crx.financing.entities.PurchaserFinancingSettings;
 import lu.crx.financing.entities.Invoice;
+import lu.crx.financing.services.financing.InvoiceFinancingService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;

@@ -1,4 +1,4 @@
-package lu.crx.financing.services;
+package lu.crx.financing.services.financing;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,17 @@ public class FinancingCalculationService {
             return 0;
         }
 
-        return Math.round((float) annualRateInBps * financingTermInDays / DAYS_IN_FINANCIAL_YEAR);
+        return (int) Math.round((double) annualRateInBps * financingTermInDays / DAYS_IN_FINANCIAL_YEAR);
+    }
+
+    public double calculateExactFinancingRate(int annualRateInBps, int financingTermInDays) {
+        if (annualRateInBps <= 0 || financingTermInDays <= 0) {
+            log.warn("Invalid input for exact financing rate calculation: rate={}, term={}",
+                    annualRateInBps, financingTermInDays);
+            return 0.0;
+        }
+
+        return (double) annualRateInBps * financingTermInDays / DAYS_IN_FINANCIAL_YEAR;
     }
 
     public long calculateDiscountAmount(long invoiceValueInCents, int financingRateInBps) {

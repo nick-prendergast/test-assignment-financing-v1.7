@@ -1,4 +1,4 @@
-package lu.crx.financing.services;
+package lu.crx.financing.services.financing;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

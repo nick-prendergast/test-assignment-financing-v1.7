@@ -1,7 +1,13 @@
-package lu.crx.financing.services;
+package lu.crx.financing.services.financing;
 
-import lu.crx.financing.entities.*;
+import lu.crx.financing.entities.Invoice;
+import lu.crx.financing.entities.Purchaser;
 import lu.crx.financing.entities.PurchaserFinancingResult;
+import lu.crx.financing.entities.PurchaserFinancingSettings;
+import lu.crx.financing.entities.Creditor;
+import lu.crx.financing.entities.Debtor;
+import lu.crx.financing.services.eligibility.PurchaserEligibilityService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,10 +15,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Optional;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -23,11 +33,14 @@ class PurchaserSelectionServiceTest {
     @Mock
     private FinancingCalculationService calculationService;
 
+    @Mock
+    private PurchaserEligibilityService eligibilityService;
+
     private PurchaserSelectionService purchaserSelectionService;
 
     @BeforeEach
     void setUp() {
-        purchaserSelectionService = new PurchaserSelectionService(calculationService);
+        purchaserSelectionService = new PurchaserSelectionService(calculationService, eligibilityService);
     }
 
     @Test
@@ -80,11 +93,17 @@ class PurchaserSelectionServiceTest {
 
         when(calculationService.calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate())))
                 .thenReturn(30);
-        when(calculationService.calculateFinancingRate(eq(50), eq(30))).thenReturn(4);
-        when(calculationService.calculateFinancingRate(eq(40), eq(30))).thenReturn(3);
+        when(eligibilityService.isPurchaserEligible(eq(purchaser1), eq(creditor), eq(30), eq(3)))
+                .thenReturn(true);
+        when(eligibilityService.isPurchaserEligible(eq(purchaser2), eq(creditor), eq(30), eq(3)))
+                .thenReturn(true);
+        when(eligibilityService.createFinancingResult(eq(purchaser1), eq(creditor), eq(30), eq(LocalDate.now())))
+                .thenReturn(new PurchaserFinancingResult(purchaser1, 4, 30, LocalDate.now(), 4.0));
+        when(eligibilityService.createFinancingResult(eq(purchaser2), eq(creditor), eq(30), eq(LocalDate.now())))
+                .thenReturn(new PurchaserFinancingResult(purchaser2, 3, 30, LocalDate.now(), 3.0));
 
         // When
-        Optional<PurchaserFinancingResult> result = purchaserSelectionService.findBestPurchaser(
+        Optional<PurchaserFinancingResult> result = purchaserSelectionService.findBestPurchaserForInvoice(
                 invoice,
                 Arrays.asList(purchaser1, purchaser2),
                 LocalDate.now()
@@ -99,8 +118,10 @@ class PurchaserSelectionServiceTest {
         assertEquals(LocalDate.now(), financingResult.getFinancingDate());
 
         verify(calculationService).calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate()));
-        verify(calculationService).calculateFinancingRate(eq(50), eq(30));
-        verify(calculationService).calculateFinancingRate(eq(40), eq(30));
+        verify(eligibilityService).isPurchaserEligible(eq(purchaser1), eq(creditor), eq(30), eq(3));
+        verify(eligibilityService).isPurchaserEligible(eq(purchaser2), eq(creditor), eq(30), eq(3));
+        verify(eligibilityService).createFinancingResult(eq(purchaser1), eq(creditor), eq(30), eq(LocalDate.now()));
+        verify(eligibilityService).createFinancingResult(eq(purchaser2), eq(creditor), eq(30), eq(LocalDate.now()));
     }
 
     @Test
@@ -132,10 +153,11 @@ class PurchaserSelectionServiceTest {
 
         when(calculationService.calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate())))
                 .thenReturn(30);
-        when(calculationService.calculateFinancingRate(anyInt(), eq(30))).thenReturn(3);
+        when(eligibilityService.isPurchaserEligible(eq(purchaser), eq(creditor), eq(30), eq(2)))
+                .thenReturn(false);
 
         // When
-        Optional<PurchaserFinancingResult> result = purchaserSelectionService.findBestPurchaser(
+        Optional<PurchaserFinancingResult> result = purchaserSelectionService.findBestPurchaserForInvoice(
                 invoice,
                 Collections.singletonList(purchaser),
                 LocalDate.now()
@@ -145,7 +167,7 @@ class PurchaserSelectionServiceTest {
         assertFalse(result.isPresent());
 
         verify(calculationService).calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate()));
-        verify(calculationService).calculateFinancingRate(anyInt(), eq(30));
+        verify(eligibilityService).isPurchaserEligible(eq(purchaser), eq(creditor), eq(30), eq(2));
     }
 
     @Test
@@ -177,9 +199,11 @@ class PurchaserSelectionServiceTest {
 
         when(calculationService.calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate())))
                 .thenReturn(30);
+        when(eligibilityService.isPurchaserEligible(eq(purchaser), eq(creditor), eq(30), eq(50)))
+                .thenReturn(false);
 
         // When
-        Optional<PurchaserFinancingResult> result = purchaserSelectionService.findBestPurchaser(
+        Optional<PurchaserFinancingResult> result = purchaserSelectionService.findBestPurchaserForInvoice(
                 invoice,
                 Collections.singletonList(purchaser),
                 LocalDate.now()
@@ -189,6 +213,7 @@ class PurchaserSelectionServiceTest {
         assertFalse(result.isPresent());
 
         verify(calculationService).calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate()));
+        verify(eligibilityService).isPurchaserEligible(eq(purchaser), eq(creditor), eq(30), eq(50));
     }
 
     @Test
@@ -214,9 +239,11 @@ class PurchaserSelectionServiceTest {
 
         when(calculationService.calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate())))
                 .thenReturn(30);
+        when(eligibilityService.isPurchaserEligible(eq(purchaser), eq(creditor), eq(30), eq(50)))
+                .thenReturn(false);
 
         // When
-        Optional<PurchaserFinancingResult> result = purchaserSelectionService.findBestPurchaser(
+        Optional<PurchaserFinancingResult> result = purchaserSelectionService.findBestPurchaserForInvoice(
                 invoice,
                 Collections.singletonList(purchaser),
                 LocalDate.now()
@@ -226,5 +253,6 @@ class PurchaserSelectionServiceTest {
         assertFalse(result.isPresent());
 
         verify(calculationService).calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate()));
+        verify(eligibilityService).isPurchaserEligible(eq(purchaser), eq(creditor), eq(30), eq(50));
     }
 }

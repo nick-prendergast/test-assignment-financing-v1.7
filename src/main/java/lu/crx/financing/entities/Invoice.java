@@ -64,7 +64,7 @@ public class Invoice implements Serializable {
 
     /**
      * The early discounted amount of the invoice. Should be not null if invoice has been financed.
-     *  The sum earlyPaymentAmountInCents + discountedAmountInCents should be equal to valueInCents.
+     * The sum earlyPaymentAmountInCents + discountedAmountInCents should be equal to valueInCents.
      */
     @Basic
     private Long discountedAmountInCents;
