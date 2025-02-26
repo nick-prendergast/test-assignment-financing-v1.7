@@ -9,6 +9,7 @@ import lu.crx.financing.entities.PurchaserFinancingResult;
 import lu.crx.financing.entities.PurchaserFinancingSettings;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,7 +26,7 @@ public class PurchaserSelectionService {
     public Optional<PurchaserFinancingResult> findBestPurchaser(Invoice invoice, List<Purchaser> purchasers, LocalDate financingDate) {
         Creditor creditor = invoice.getCreditor();
         int financingTermInDays = calculationService.calculateFinancingTerm(financingDate, invoice.getMaturityDate());
-        int maxFinancingRateInBps = creditor.getMaxFinancingRateInBps();
+        BigDecimal maxFinancingRateInBps = creditor.getMaxFinancingRateInBps();
 
         List<PurchaserFinancingResult> eligiblePurchasers = new ArrayList<>();
 
@@ -39,7 +40,8 @@ public class PurchaserSelectionService {
                 continue;
             }
 
-            int financingRateInBps = calculateFinancingRate(settingsOpt.get(), financingTermInDays);
+            BigDecimal financingRateInBps = calculationService.calculateFinancingRate(
+                    settingsOpt.get().getAnnualRateInBps(), financingTermInDays);
 
             if (exceedsMaxFinancingRate(financingRateInBps, maxFinancingRateInBps)) {
                 continue;
@@ -67,13 +69,8 @@ public class PurchaserSelectionService {
         return isValid;
     }
 
-    private int calculateFinancingRate(PurchaserFinancingSettings settings, int financingTermInDays) {
-        return calculationService.calculateFinancingRate(
-                settings.getAnnualRateInBps(), financingTermInDays);
-    }
-
-    private boolean exceedsMaxFinancingRate(int financingRateInBps, int maxFinancingRateInBps) {
-        boolean exceeds = financingRateInBps > maxFinancingRateInBps;
+    private boolean exceedsMaxFinancingRate(BigDecimal financingRateInBps, BigDecimal maxFinancingRateInBps) {
+        boolean exceeds = financingRateInBps.compareTo(maxFinancingRateInBps) > 0;
         if (exceeds) {
             log.debug("Purchaser rejected: financing rate {} bps exceeds maximum {} bps",
                     financingRateInBps, maxFinancingRateInBps);

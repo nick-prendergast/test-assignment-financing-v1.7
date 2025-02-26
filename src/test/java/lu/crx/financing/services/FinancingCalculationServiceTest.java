@@ -3,9 +3,11 @@ package lu.crx.financing.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FinancingCalculationServiceTest {
 
@@ -36,36 +38,53 @@ class FinancingCalculationServiceTest {
         int financingTermInDays = 30;
 
         // When
-        int result = calculationService.calculateFinancingRate(annualRateInBps, financingTermInDays);
+        BigDecimal result = calculationService.calculateFinancingRate(annualRateInBps, financingTermInDays);
 
         // Then
-        assertEquals(4, result);
+        // 50 * 30 / 360 = 4.1666...
+        assertEquals(0, new BigDecimal("4.1666666667").compareTo(result));
     }
 
     @Test
     void shouldCalculateDiscountAmount() {
         // Given
         long invoiceValueInCents = 10_000_00L;
-        int financingRateInBps = 4;
+        BigDecimal financingRateInBps = new BigDecimal("4.1666666667");
 
         // When
-        long result = calculationService.calculateDiscountAmount(invoiceValueInCents, financingRateInBps);
+        BigDecimal result = calculationService.calculateDiscountAmount(invoiceValueInCents, financingRateInBps);
 
         // Then
-        assertEquals(4_00L, result);
+        // 10_000_00 * 4.1666666667 / 10000 = 416.6666...
+        assertTrue(result.compareTo(new BigDecimal("416.666667")) == 0);
+    }
+
+    @Test
+    void shouldCalculateEarlyPaymentAmount() {
+        // Given
+        long invoiceValueInCents = 10_000_00L;
+        BigDecimal financingRateInBps = new BigDecimal("4.1666666667");
+
+        // When
+        BigDecimal result = calculationService.calculateEarlyPaymentAmount(invoiceValueInCents, financingRateInBps);
+
+        // Then
+        // 10_000_00 - 416.6666... = 999583.3333...
+        BigDecimal expected = new BigDecimal(10_000_00).subtract(new BigDecimal("416.666667"));
+        assertTrue(result.compareTo(expected) == 0);
     }
 
     @Test
     void shouldReturnZeroDiscountForZeroRate() {
         // Given
         long invoiceValueInCents = 10_000_00L;
-        int financingRateInBps = 0;
+        BigDecimal financingRateInBps = BigDecimal.ZERO;
 
         // When
-        long result = calculationService.calculateDiscountAmount(invoiceValueInCents, financingRateInBps);
+        BigDecimal result = calculationService.calculateDiscountAmount(invoiceValueInCents, financingRateInBps);
 
         // Then
-        assertEquals(0L, result);
+        assertTrue(result.compareTo(BigDecimal.ZERO) == 0);
     }
 
     @Test
@@ -75,23 +94,23 @@ class FinancingCalculationServiceTest {
         int financingTermInDays = 0;
 
         // When
-        int result = calculationService.calculateFinancingRate(annualRateInBps, financingTermInDays);
+        BigDecimal result = calculationService.calculateFinancingRate(annualRateInBps, financingTermInDays);
 
         // Then
-        assertEquals(0, result);
+        assertTrue(result.compareTo(BigDecimal.ZERO) == 0);
     }
 
     @Test
     void shouldHandleNegativeInvoiceValue() {
         // Given
         long invoiceValueInCents = -10_000_00L;
-        int financingRateInBps = 4;
+        BigDecimal financingRateInBps = new BigDecimal("4.1666666667");
 
         // When
-        long result = calculationService.calculateDiscountAmount(invoiceValueInCents, financingRateInBps);
+        BigDecimal result = calculationService.calculateDiscountAmount(invoiceValueInCents, financingRateInBps);
 
         // Then
-        assertEquals(0L, result);
+        assertTrue(result.compareTo(BigDecimal.ZERO) == 0);
     }
 
     @Test
@@ -101,10 +120,10 @@ class FinancingCalculationServiceTest {
         int financingTermInDays = 30;
 
         // When
-        int result = calculationService.calculateFinancingRate(annualRateInBps, financingTermInDays);
+        BigDecimal result = calculationService.calculateFinancingRate(annualRateInBps, financingTermInDays);
 
         // Then
-        assertEquals(0, result);
+        assertTrue(result.compareTo(BigDecimal.ZERO) == 0);
     }
 
     @Test
@@ -114,14 +133,14 @@ class FinancingCalculationServiceTest {
         int financingTermInDays = -30;
 
         // When
-        int result = calculationService.calculateFinancingRate(annualRateInBps, financingTermInDays);
+        BigDecimal result = calculationService.calculateFinancingRate(annualRateInBps, financingTermInDays);
 
         // Then
-        assertEquals(0, result);
+        assertTrue(result.compareTo(BigDecimal.ZERO) == 0);
     }
 
     @Test
-    void shouldReturnZeroForNegativeDates() {
+    void shouldReturnNegativeForNegativeDates() {
         // Given
         LocalDate currentDate = LocalDate.of(2023, 1, 31);
         LocalDate maturityDate = LocalDate.of(2023, 1, 1);
@@ -134,15 +153,17 @@ class FinancingCalculationServiceTest {
     }
 
     @Test
-    void shouldCalculateExactBpsValueForDiscountAmount() {
-        // Given
-        long invoiceValueInCents = 1_000_000_00L; // $1,000,000.00
-        int financingRateInBps = 1; // 0.01%
+    void shouldCalculatePreciselyWithoutRounding() {
+        // Given - values that would produce exactly the same result with rounding
+        int annualRateInBps1 = 43;
+        int annualRateInBps2 = 44;
+        int financingTermInDays = 17;
 
         // When
-        long result = calculationService.calculateDiscountAmount(invoiceValueInCents, financingRateInBps);
+        BigDecimal result1 = calculationService.calculateFinancingRate(annualRateInBps1, financingTermInDays);
+        BigDecimal result2 = calculationService.calculateFinancingRate(annualRateInBps2, financingTermInDays);
 
-        // Then
-        assertEquals(100_00L, result); // $100.00
+        // Then - these values should be different
+        assertTrue(result1.compareTo(result2) < 0);
     }
 }

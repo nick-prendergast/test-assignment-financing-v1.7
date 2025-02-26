@@ -1,6 +1,8 @@
 package lu.crx.financing.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,6 +39,6 @@ public class Creditor implements Serializable {
      * Maximum acceptable financing rate for this creditor.
      */
     @Basic(optional = false)
-    private int maxFinancingRateInBps;
+    private BigDecimal maxFinancingRateInBps;
 
 }

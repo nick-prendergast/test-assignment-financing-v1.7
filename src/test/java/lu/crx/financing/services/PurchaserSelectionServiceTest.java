@@ -1,13 +1,13 @@
 package lu.crx.financing.services;
 
 import lu.crx.financing.entities.*;
-import lu.crx.financing.entities.PurchaserFinancingResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -36,7 +36,7 @@ class PurchaserSelectionServiceTest {
         Creditor creditor = Creditor.builder()
                 .id(1L)
                 .name("Creditor1")
-                .maxFinancingRateInBps(3)
+                .maxFinancingRateInBps(new BigDecimal("3"))
                 .build();
 
         Debtor debtor = Debtor.builder()
@@ -80,8 +80,8 @@ class PurchaserSelectionServiceTest {
 
         when(calculationService.calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate())))
                 .thenReturn(30);
-        when(calculationService.calculateFinancingRate(eq(50), eq(30))).thenReturn(4);
-        when(calculationService.calculateFinancingRate(eq(40), eq(30))).thenReturn(3);
+        when(calculationService.calculateFinancingRate(eq(50), eq(30))).thenReturn(new BigDecimal("4.1667"));
+        when(calculationService.calculateFinancingRate(eq(40), eq(30))).thenReturn(new BigDecimal("3.3333"));
 
         // When
         Optional<PurchaserFinancingResult> result = purchaserSelectionService.findBestPurchaser(
@@ -94,7 +94,7 @@ class PurchaserSelectionServiceTest {
         assertTrue(result.isPresent());
         PurchaserFinancingResult financingResult = result.get();
         assertEquals(purchaser2.getId(), financingResult.getPurchaser().getId());
-        assertEquals(3, financingResult.getFinancingRateInBps());
+        assertEquals(0, new BigDecimal("3.3333").compareTo(financingResult.getFinancingRateInBps()));
         assertEquals(30, financingResult.getFinancingTermInDays());
         assertEquals(LocalDate.now(), financingResult.getFinancingDate());
 
@@ -109,7 +109,7 @@ class PurchaserSelectionServiceTest {
         Creditor creditor = Creditor.builder()
                 .id(1L)
                 .name("Creditor1")
-                .maxFinancingRateInBps(2)
+                .maxFinancingRateInBps(new BigDecimal("2"))
                 .build();
 
         Invoice invoice = Invoice.builder()
@@ -132,7 +132,7 @@ class PurchaserSelectionServiceTest {
 
         when(calculationService.calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate())))
                 .thenReturn(30);
-        when(calculationService.calculateFinancingRate(anyInt(), eq(30))).thenReturn(3);
+        when(calculationService.calculateFinancingRate(anyInt(), eq(30))).thenReturn(new BigDecimal("3.3333"));
 
         // When
         Optional<PurchaserFinancingResult> result = purchaserSelectionService.findBestPurchaser(
@@ -154,7 +154,7 @@ class PurchaserSelectionServiceTest {
         Creditor creditor = Creditor.builder()
                 .id(1L)
                 .name("Creditor1")
-                .maxFinancingRateInBps(50)
+                .maxFinancingRateInBps(new BigDecimal("50"))
                 .build();
 
         Invoice invoice = Invoice.builder()
@@ -197,7 +197,7 @@ class PurchaserSelectionServiceTest {
         Creditor creditor = Creditor.builder()
                 .id(1L)
                 .name("Creditor1")
-                .maxFinancingRateInBps(50)
+                .maxFinancingRateInBps(new BigDecimal("50"))
                 .build();
 
         Invoice invoice = Invoice.builder()
@@ -226,5 +226,68 @@ class PurchaserSelectionServiceTest {
         assertFalse(result.isPresent());
 
         verify(calculationService).calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate()));
+    }
+
+    @Test
+    void shouldDifferentiateBetweenVeryCloseRates() {
+        // Given
+        Creditor creditor = Creditor.builder()
+                .id(1L)
+                .name("Creditor1")
+                .maxFinancingRateInBps(new BigDecimal("5"))
+                .build();
+
+        Invoice invoice = Invoice.builder()
+                .id(1L)
+                .creditor(creditor)
+                .maturityDate(LocalDate.now().plusDays(30))
+                .build();
+
+        Purchaser purchaser1 = Purchaser.builder()
+                .id(1L)
+                .name("Purchaser1")
+                .minimumFinancingTermInDays(20)
+                .purchaserFinancingSettings(new HashSet<>(Collections.singletonList(
+                        PurchaserFinancingSettings.builder()
+                                .id(1L)
+                                .creditor(creditor)
+                                .annualRateInBps(43)
+                                .build()
+                )))
+                .build();
+
+        Purchaser purchaser2 = Purchaser.builder()
+                .id(2L)
+                .name("Purchaser2")
+                .minimumFinancingTermInDays(20)
+                .purchaserFinancingSettings(new HashSet<>(Collections.singletonList(
+                        PurchaserFinancingSettings.builder()
+                                .id(2L)
+                                .creditor(creditor)
+                                .annualRateInBps(42)
+                                .build()
+                )))
+                .build();
+
+        when(calculationService.calculateFinancingTerm(eq(LocalDate.now()), eq(invoice.getMaturityDate())))
+                .thenReturn(30);
+
+        // Very close rates that would tie if rounded
+        when(calculationService.calculateFinancingRate(eq(43), eq(30))).thenReturn(new BigDecimal("3.5833"));
+        when(calculationService.calculateFinancingRate(eq(42), eq(30))).thenReturn(new BigDecimal("3.5000"));
+
+        // When
+        Optional<PurchaserFinancingResult> result = purchaserSelectionService.findBestPurchaser(
+                invoice,
+                Arrays.asList(purchaser1, purchaser2),
+                LocalDate.now()
+        );
+
+        // Then
+        assertTrue(result.isPresent());
+        PurchaserFinancingResult financingResult = result.get();
+        // Should select purchaser2 with slightly lower rate
+        assertEquals(purchaser2.getId(), financingResult.getPurchaser().getId());
+        assertEquals(0, new BigDecimal("3.5000").compareTo(financingResult.getFinancingRateInBps()));
     }
 }
